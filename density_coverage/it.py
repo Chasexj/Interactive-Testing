@@ -81,38 +81,43 @@ def ca_trimmer(n,k):
     #print(dens_ca_n)
     return dens_ca_n
 
-def scatter(changing_para, random_p, dens_p):
-    title = "changing k, random = green, dens = red"
+def scatter(changing_para, random_p, dens_p,changing_param):
+    title = "changing "+changing_param+", random = green, dens = red"
     plt.scatter(changing_para,random_p, c="g")
     plt.scatter(changing_para,dens_p, c="r")
     plt.title(title)
-    plt.xlabel("k")
+    plt.xlabel(changing_param)
     plt.ylabel("P")
     fig = plt.gcf()
     plt.show()
     fig.savefig(title+'.png')
     return 0
 
-def main():
-    # sample  params
-    params_to_run = [(2,5,2),(2,6,2),(2,7,2),(2,8,2),(2,9,2),(2,10,2),(2,11,2),(2,12,2),(2,13,2),(2,14,2),(2,15,2),(2,16,2),(2,17,2),(2,18,2),(2,19,2),(2,20,2)]
-    #additional parameters: (3,17,3), (4,6,4)
-    num_runs_each = 5
-    
-    #lamda used to check
-    ldl = [2]
+def testing(params_to_run,ldl,num_runs_each,changing_param):
+    #values for changing non ld
+    #values = [0]*len(params_to_run)
+    #random_p = [0]*len(params_to_run)
+    #dens_p = [0]*len(params_to_run)
 
-    k_values = [0]*len(params_to_run)
-    k_random_p = [0]*len(params_to_run)
-    k_dens_p = [0]*len(params_to_run)
+    #values for changing ld
+    values = [0]*len(ldl)
+    random_p = [0]*len(ldl)
+    dens_p = [0]*len(ldl)
 
     counter = 0
     prg = 0
     for t,k,v in params_to_run:
         print(t,k,v)
-        k_values[counter] = k
+        #t changing
+        #values[counter] = t
+        #k changing
+        #values[counter] = k
+        #v changing
+        #values[counter] = v
         for ld in ldl:
             #print("Lambda = "+str(ld))
+            #ld changing
+            values[counter] = ld
             prg = prg + 1
             t_random_p = 0
             t_dens_p = 0
@@ -130,18 +135,37 @@ def main():
                 #print("\n"+str(t_dens_p))
             av_random_p = t_random_p/num_runs_each
             av_dens_p = t_dens_p/num_runs_each
-            k_random_p[counter] = av_random_p
-            k_dens_p[counter] = av_dens_p
+            random_p[counter] = av_random_p
+            dens_p[counter] = av_dens_p
             #print("\n-------------------")
-        counter = counter + 1
+            #ld changing
+            counter = counter + 1
+        #non ld changing
+        #counter = counter + 1
         #print("\n########################")
-    print("k_values")
-    print(k_values)
-    print("k_random_p")
-    print(k_random_p)
-    print("k_dens_p")
-    print(k_dens_p)
-    scatter(k_values,k_random_p,k_dens_p)
+    print(counter)
+    scatter(values,random_p,dens_p,changing_param)
+
+def main():
+    # sample  params
+
+    #k changing
+    #params_to_run = [(2,5,2),(2,6,2),(2,7,2),(2,8,2),(2,9,2),(2,10,2),(2,11,2),(2,12,2),(2,13,2),(2,14,2),(2,15,2),(2,16,2),(2,17,2),(2,18,2),(2,19,2),(2,20,2)]
+    #t changing
+    #params_to_run = [(2,8,2),(3,8,2),(4,8,2),(5,8,2),(6,8,2),(7,8,2),(8,8,2)]
+    #v changing
+    #params_to_run = [(2,5,2),(2,5,3),(2,5,4),(2,5,5),(2,5,6),(2,5,7),(2,5,8)]
+    #additional parameters: (3,17,3), (4,6,4)
+    num_runs_each = 1
+    
+    #lamda used to check
+    #ldl = [2]
+    #changing lamda
+    params_to_run=[(2,13,2)]
+    ldl=[1,2,3,4,5,6,7,8,9,10,11,12,13]
+    changing_param = "ld"
+    testing(params_to_run,ldl,num_runs_each,changing_param)
+
 
 
 main()
