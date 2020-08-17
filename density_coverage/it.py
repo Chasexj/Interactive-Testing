@@ -107,13 +107,16 @@ def main():
     k_dens_p = [0]*len(params_to_run)
 
     counter = 0
+    prg = 0
     for t,k,v in params_to_run:
         print(t,k,v)
         k_values[counter] = k
         for ld in ldl:
             #print("Lambda = "+str(ld))
+            prg = prg + 1
             t_random_p = 0
             t_dens_p = 0
+            print("Progress: "+str(100*(prg/(len(params_to_run)*len(ldl)*num_runs_each)))+"%")
             for i in range(num_runs_each):
                 result_ca, all_interactions = run(t,k,v)
                 #print(result_ca)
@@ -122,9 +125,9 @@ def main():
                 args = str(t)+" "+str(k)+" "+ str(v)+" "+str(ld)
                 os.system("python3 density.py "+args)
                 dens_ca_n = ca_trimmer(len(result_ca),k)
-                print("Density Method")
+                #print("Density Method")
                 t_dens_p = t_dens_p + ld_percent_check(dens_ca_n,all_interactions,ld,t,k,v)
-                print("\n"+str(t_dens_p))
+                #print("\n"+str(t_dens_p))
             av_random_p = t_random_p/num_runs_each
             av_dens_p = t_dens_p/num_runs_each
             k_random_p[counter] = av_random_p
