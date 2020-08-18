@@ -63,21 +63,20 @@ def ld_percent_check(result_ca,all_interactions,ld,t,k,v):
     for covered_times in ld_coverage:
         if covered_times >= ld:
             int_sat = int_sat+1
-    #print(" Percent Coverage of lambda "+str(int(100*(int_sat/len(all_interactions))))+"%")
-
     return int(100*(int_sat/len(all_interactions)))
 
-def ca_trimmer(n,k):
+def ca_convert(n,k):
     dens_ca_n = [[0 for i in range(k)] for j in range(n)]
     with open("dca.txt","r") as f:
         dca = f.readline()
     count = 0
     dens_ca_rows = len(dens_ca_n)/k
-    if dens_ca_rows >= n:
-        for i in range(n):
-            for j in range(k):
-                dens_ca_n[i][j] = int(dca[count])
-                count=count+1
+    #######good question
+    #if dens_ca_rows >= n:
+    for i in range(n):
+        for j in range(k):
+            dens_ca_n[i][j] = int(dca[count])
+            count=count+1
     #print(dens_ca_n)
     return dens_ca_n
 
@@ -94,80 +93,77 @@ def scatter(changing_para, random_p, dens_p,changing_param):
     return 0
 
 def testing(params_to_run,ldl,num_runs_each,changing_param):
-    #values for changing non ld
-    #values = [0]*len(params_to_run)
-    #random_p = [0]*len(params_to_run)
-    #dens_p = [0]*len(params_to_run)
+    ##values for changing non ld
+    values = [0]*len(params_to_run)
+    random_p = [0]*len(params_to_run)
+    dens_p = [0]*len(params_to_run)
 
-    #values for changing ld
-    values = [0]*len(ldl)
-    random_p = [0]*len(ldl)
-    dens_p = [0]*len(ldl)
+    ##values for changing ld
+    #values = [0]*len(ldl)
+    #random_p = [0]*len(ldl)
+    #dens_p = [0]*len(ldl)
 
     counter = 0
     prg = 0
     for t,k,v in params_to_run:
         print(t,k,v)
-        #t changing
+        ##t changing
         #values[counter] = t
-        #k changing
+        ##k changing
         #values[counter] = k
-        #v changing
+        ##v changing
         #values[counter] = v
+        ##every thing changing
+        values[counter] = t+k+v
         for ld in ldl:
-            #print("Lambda = "+str(ld))
             #ld changing
-            values[counter] = ld
+            #values[counter] = ld
             prg = prg + 1
             t_random_p = 0
             t_dens_p = 0
             print("Progress: "+str(100*(prg/(len(params_to_run)*len(ldl)*num_runs_each)))+"%")
             for i in range(num_runs_each):
                 result_ca, all_interactions = run(t,k,v)
-                #print(result_ca)
-                #print(len(result_ca), end=",")
                 t_random_p = t_random_p+ ld_percent_check(result_ca,all_interactions,ld,t,k,v)
-                args = str(t)+" "+str(k)+" "+ str(v)+" "+str(ld)
+                args = str(t)+" "+str(k)+" "+ str(v)+" "+str(ld)+" "+str(len(result_ca))
                 os.system("python3 density.py "+args)
-                dens_ca_n = ca_trimmer(len(result_ca),k)
-                #print("Density Method")
+                dens_ca_n = ca_convert(len(result_ca),k)
                 t_dens_p = t_dens_p + ld_percent_check(dens_ca_n,all_interactions,ld,t,k,v)
-                #print("\n"+str(t_dens_p))
             av_random_p = t_random_p/num_runs_each
             av_dens_p = t_dens_p/num_runs_each
             random_p[counter] = av_random_p
             dens_p[counter] = av_dens_p
-            #print("\n-------------------")
-            #ld changing
-            counter = counter + 1
-        #non ld changing
-        #counter = counter + 1
-        #print("\n########################")
-    print(counter)
+            ##ld changing
+            #counter = counter + 1
+
+        ##non ld changing
+        counter = counter + 1
     scatter(values,random_p,dens_p,changing_param)
 
 def main():
-    # sample  params
 
-    #k changing
+    ##k changing
     #params_to_run = [(2,5,2),(2,6,2),(2,7,2),(2,8,2),(2,9,2),(2,10,2),(2,11,2),(2,12,2),(2,13,2),(2,14,2),(2,15,2),(2,16,2),(2,17,2),(2,18,2),(2,19,2),(2,20,2)]
-    #t changing
+
+    ##t changing
     #params_to_run = [(2,8,2),(3,8,2),(4,8,2),(5,8,2),(6,8,2),(7,8,2),(8,8,2)]
-    #v changing
+
+    ##v changing
     #params_to_run = [(2,5,2),(2,5,3),(2,5,4),(2,5,5),(2,5,6),(2,5,7),(2,5,8)]
-    #additional parameters: (3,17,3), (4,6,4)
     num_runs_each = 1
     
+    ##every thing changing
+    params_to_run = [(2,5,2),(3,5,2),(3,6,2),(3,6,3),(4,6,3)]
     #lamda used to check
-    #ldl = [2]
-    #changing lamda
-    params_to_run=[(2,13,2)]
-    ldl=[1,2,3,4,5,6,7,8,9,10,11,12,13]
-    changing_param = "ld"
+    ldl = [3]
+
+    ##changing lamda
+    #params_to_run=[(2,13,2)]
+    #ldl=[1,2,3,4,5,6,7,8,9,10,11,12,13]
+
+    changing_param = "eve"
     testing(params_to_run,ldl,num_runs_each,changing_param)
 
 
 
 main()
-#combinations of [(k choose t) * v^t] => product
-#Yi Test Change

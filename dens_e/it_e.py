@@ -65,17 +65,18 @@ def ld_percent_check(result_ca,all_interactions,ld,t,k,v):
             int_sat = int_sat+1
     return int(100*(int_sat/len(all_interactions)))
 
-def ca_trimmer(n,k):
+def ca_convert(n,k):
     dens_ca_n = [[0 for i in range(k)] for j in range(n)]
     with open("dca.txt","r") as f:
         dca = f.readline()
     count = 0
     dens_ca_rows = len(dens_ca_n)/k
-    if dens_ca_rows >= n:
-        for i in range(n):
-            for j in range(k):
-                dens_ca_n[i][j] = int(dca[count])
-                count=count+1
+    #######good question
+    #if dens_ca_rows >= n:
+    for i in range(n):
+        for j in range(k):
+            dens_ca_n[i][j] = int(dca[count])
+            count=count+1
     #print(dens_ca_n)
     return dens_ca_n
 
@@ -109,9 +110,11 @@ def testing(params_to_run,ldl,num_runs_each,changing_param):
         ##t changing
         #values[counter] = t
         ##k changing
-        values[counter] = k
+        #values[counter] = k
         ##v changing
         #values[counter] = v
+        ##every thing changing
+        values[counter] = t+k+v
         for ld in ldl:
             #ld changing
             #values[counter] = ld
@@ -122,9 +125,9 @@ def testing(params_to_run,ldl,num_runs_each,changing_param):
             for i in range(num_runs_each):
                 result_ca, all_interactions = run(t,k,v)
                 t_random_p = t_random_p+ ld_percent_check(result_ca,all_interactions,ld,t,k,v)
-                args = str(t)+" "+str(k)+" "+ str(v)+" "+str(ld)
+                args = str(t)+" "+str(k)+" "+ str(v)+" "+str(ld)+" "+str(len(result_ca))
                 os.system("python3 density_e.py "+args)
-                dens_ca_n = ca_trimmer(len(result_ca),k)
+                dens_ca_n = ca_convert(len(result_ca),k)
                 t_dens_p = t_dens_p + ld_percent_check(dens_ca_n,all_interactions,ld,t,k,v)
             av_random_p = t_random_p/num_runs_each
             av_dens_p = t_dens_p/num_runs_each
@@ -135,13 +138,12 @@ def testing(params_to_run,ldl,num_runs_each,changing_param):
 
         ##non ld changing
         counter = counter + 1
-    print(counter)
     scatter(values,random_p,dens_p,changing_param)
 
 def main():
 
     ##k changing
-    params_to_run = [(2,5,2),(2,6,2),(2,7,2),(2,8,2),(2,9,2),(2,10,2),(2,11,2),(2,12,2),(2,13,2),(2,14,2),(2,15,2),(2,16,2),(2,17,2),(2,18,2),(2,19,2),(2,20,2)]
+    #params_to_run = [(2,5,2),(2,6,2),(2,7,2),(2,8,2),(2,9,2),(2,10,2),(2,11,2),(2,12,2),(2,13,2),(2,14,2),(2,15,2),(2,16,2),(2,17,2),(2,18,2),(2,19,2),(2,20,2)]
 
     ##t changing
     #params_to_run = [(2,8,2),(3,8,2),(4,8,2),(5,8,2),(6,8,2),(7,8,2),(8,8,2)]
@@ -150,14 +152,16 @@ def main():
     #params_to_run = [(2,5,2),(2,5,3),(2,5,4),(2,5,5),(2,5,6),(2,5,7),(2,5,8)]
     num_runs_each = 1
     
+    ##every thing changing
+    params_to_run = [(2,5,2),(3,5,2),(3,6,2),(3,6,3),(4,6,3)]
     #lamda used to check
-    ldl = [2]
+    ldl = [3]
 
     ##changing lamda
     #params_to_run=[(2,13,2)]
     #ldl=[1,2,3,4,5,6,7,8,9,10,11,12,13]
 
-    changing_param = "ld"
+    changing_param = "eve"
     testing(params_to_run,ldl,num_runs_each,changing_param)
 
 

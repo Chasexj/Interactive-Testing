@@ -4,7 +4,7 @@ from scipy.special import comb
 import sys
 import random
 
-t,k,v,l = [int(i) for i in sys.argv[1:]]
+t,k,v,l,end_val = [int(i) for i in sys.argv[1:]]
 
 p = 1/(v**t)
 
@@ -63,7 +63,9 @@ for cols in itertools.combinations(range(k), t):
 	vals = tuple(0 for i in range(t))
 	cov_dict[(cols,vals)] = 1
 
-
+###############
+counter_end = 1
+###############
 while True:
 	t_sets_left = {elem : val for elem,val in cov_dict.items() if val < l}
 	if len(t_sets_left) == 0:
@@ -104,6 +106,10 @@ while True:
 		row[col] = best_val
 	it += 1
 	ca.append(row)
+	if counter_end == end_val:
+		break
+	else:
+		counter_end = counter_end + 1
 	for t_set in t_sets_left:
 		cols, vals = t_set
 		vals_in_row = tuple(row[col] for col in cols)
