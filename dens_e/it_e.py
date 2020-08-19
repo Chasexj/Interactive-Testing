@@ -70,13 +70,12 @@ def ca_convert(n,k):
     with open("dca.txt","r") as f:
         dca = f.readline()
     count = 0
-    dens_ca_rows = len(dens_ca_n)/k
-    #######good question
-    #if dens_ca_rows >= n:
-    for i in range(n):
-        for j in range(k):
-            dens_ca_n[i][j] = int(dca[count])
-            count=count+1
+    dens_ca_rows = len(dca)/k
+    if dens_ca_rows >= n:
+        for i in range(n):
+            for j in range(k):
+                dens_ca_n[i][j] = int(dca[count])
+                count=count+1
     #print(dens_ca_n)
     return dens_ca_n
 
@@ -104,24 +103,22 @@ def testing(params_to_run,ldl,num_runs_each,changing_param):
     #dens_p = [0]*len(ldl)
 
     counter = 0
-    prg = 0
     for t,k,v in params_to_run:
         print(t,k,v)
         ##t changing
-        #values[counter] = t
+        values[counter] = t
         ##k changing
         #values[counter] = k
         ##v changing
         #values[counter] = v
         ##every thing changing
-        values[counter] = t+k+v
+        #values[counter] = t+k+v
         for ld in ldl:
             #ld changing
             #values[counter] = ld
-            prg = prg + 1
             t_random_p = 0
             t_dens_p = 0
-            print("Progress: "+str(100*(prg/(len(params_to_run)*len(ldl)*num_runs_each)))+"%")
+            #print("Progress: "+str(100*(prg/(len(params_to_run)*len(ldl)*num_runs_each)))+"%")
             for i in range(num_runs_each):
                 result_ca, all_interactions = run(t,k,v)
                 t_random_p = t_random_p+ ld_percent_check(result_ca,all_interactions,ld,t,k,v)
@@ -143,17 +140,17 @@ def testing(params_to_run,ldl,num_runs_each,changing_param):
 def main():
 
     ##k changing
-    #params_to_run = [(2,5,2),(2,6,2),(2,7,2),(2,8,2),(2,9,2),(2,10,2),(2,11,2),(2,12,2),(2,13,2),(2,14,2),(2,15,2),(2,16,2),(2,17,2),(2,18,2),(2,19,2),(2,20,2)]
+    #params_to_run = [(2,5,2),(2,6,2),(2,7,2),(2,8,2),(2,9,2),(2,10,2),(2,11,2),(2,12,2),(2,13,2),(2,14,2),(2,15,2)]
 
     ##t changing
-    #params_to_run = [(2,8,2),(3,8,2),(4,8,2),(5,8,2),(6,8,2),(7,8,2),(8,8,2)]
+    params_to_run = [(2,8,2),(3,8,2),(4,8,2),(5,8,2),(6,8,2),(7,8,2),(8,8,2)]
 
     ##v changing
     #params_to_run = [(2,5,2),(2,5,3),(2,5,4),(2,5,5),(2,5,6),(2,5,7),(2,5,8)]
-    num_runs_each = 1
+    num_runs_each = 10
     
     ##every thing changing
-    params_to_run = [(2,5,2),(3,5,2),(3,6,2),(3,6,3),(4,6,3)]
+    #params_to_run = [(2,5,2),(3,5,2),(3,6,2),(3,6,3),(4,6,3)]
     #lamda used to check
     ldl = [3]
 
@@ -161,7 +158,7 @@ def main():
     #params_to_run=[(2,13,2)]
     #ldl=[1,2,3,4,5,6,7,8,9,10,11,12,13]
 
-    changing_param = "eve"
+    changing_param = "t"
     testing(params_to_run,ldl,num_runs_each,changing_param)
 
 
