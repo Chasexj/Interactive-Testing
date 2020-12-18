@@ -34,31 +34,25 @@ def ordered_crossover(parent1,parent2):
 	a, b = random.sample(range(N), 2)
 	if a > b:
 		a, b = b, a
-	# holes indicate which entries of the parents are within the crossover points
-	holes1, holes2 = [True] * N, [True] * N
+	# crossover points
+	slice1, slice2 = [True] * N, [True] * N
 	for i in range(N):
 		if i < a or i > b:
-			#holes are swaped
-			holes1[parent2[i]] = False
-			holes2[parent1[i]] = False
-
+			slice1[parent2[i]] = False
+			slice2[parent1[i]] = False
 	child1, child2 = parent1, parent2
-	# k1 and k2 used for iterating
+	# filling
 	k1, k2 = b + 1, b + 1
 	for i in range(N):
-		# if not contained in the hole
-		if not holes1[parent1[(i + b + 1) % N]]:
-			#append to child after the hole
+		if not slice1[parent1[(i + b + 1) % N]]:
 			child1[k1 % k] = parent1[(i + b + 1) % N]
 			k1 += 1
-		if not holes2[parent2[(i + b + 1) % N]]:
+		if not slice2[parent2[(i + b + 1) % N]]:
 			child2[k2 % k] = parent2[(i + b + 1) % N]
 			k2 += 1
-		# if contained in the hole, skip	
-	# Swap the content of the holes
+	# slice swap
 	for i in range(a, b + 1):
 		child1[i], child2[i] = child2[i], child1[i]
-
 	return child1, child2
 
 # return a list with len(A) with randomly row permutation
@@ -68,7 +62,6 @@ def random_permutation():
 	return s
 
 def fitness(permutation):
-	# copying the array according to the permutation.
 	B = []
 	for row_id in permutation:
 		B.append(A[row_id][:])
@@ -81,45 +74,40 @@ def fitness(permutation):
 			if vals_in_row == vals:
 				totals += idx
 				break
-	# sum up
 	return totals
 
 
 population = [random_permutation() for i in range(num_pop)]
 
-# genetic Algorithm for min mean-time-to-failure (MTTF)
+# genetic algorithm for min mean-time-to-failure (MTTF)
 best = float('inf')
 while True:
-	# fitnesses includes total-time-to-failure : permutated row
 	fitnesses = []
 	for permutation in population:
 		fitnesses.append((fitness(permutation), permutation))
 	fitnesses.sort()
 	m = min(x[0] for x in fitnesses)
 	if m < best:
-		# this prints the best MTTF (total, not the average)
-		# The average can be found by dividing this number
-		# 		by (k choose t)*v^t
+		# prints the best MTTF (total, not the average), 
+		# average can be found by dividing this number by (k choose t)*v^t
 		print(m)
 		best = m
 
 	# Mutation
 	# Take the low half of population (i.e., most fit)
-	# open-ended
 	population = [x[1][:] for x in fitnesses[:num_pop//2]]
-	# ordered crossover for populating the second half
+	half_end = 0
+	#ordered crossover for populating the second half
 	for i in range(num_pop//2):
 		if i % 2 == 0:
 			# if i is the last row in the first half, use the first row with it to perform the cross over
+			parent1 = population[i]
 			if i == (num_pop//2) - 1:
-				parent1 = population[i]
 				parent2 = population[0]
-				#only append child1
-				child1, child2 = ordered_crossover(parent1,parent2)
-				population.append(child1)
+				half_end = 1
 			else:
-				parent1 = population[i]
 				parent2 = population[i+1]
-				child1, child2 = ordered_crossover(parent1,parent2)
-				population.append(child1)
+			child1, child2 = ordered_crossover(parent1,parent2)
+			population.append(child1)
+			if half_end == 0:
 				population.append(child2)
